@@ -1,0 +1,69 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+
+namespace WishlistTesting
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        static IWebDriver driverFF;
+
+
+        [AssemblyInitialize]
+        public static void SetUp(TestContext context)
+        {
+            driverFF = new FirefoxDriver();
+        }
+
+
+        [TestMethod]
+        public void WishListTest()
+        {
+            var wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(3));
+            driverFF.Manage().Window.Maximize();
+            driverFF.Navigate().GoToUrl("http://automationpractice.com/index.php?controller=authentication&back=my-account");
+
+            //login
+            driverFF.FindElement(By.XPath("//*[@id=\"email\"]")).SendKeys("sonika.wintec@wintec.com");
+            driverFF.FindElement(By.XPath("//*[@id=\"passwd\"]")).SendKeys("akinos");
+            driverFF.FindElement(By.XPath("//*[@id=\"passwd\"]")).SendKeys(Keys.Enter);
+
+            //create wishlists
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"center_column\"]/div/div[2]/ul/li/a/span")));
+            driverFF.FindElement(By.XPath("//*[@id=\"center_column\"]/div/div[2]/ul/li/a/span")).Click();
+            for (int i = 1; i <= 3; i++)
+            {
+                driverFF.FindElement(By.XPath("//*[@id=\"name\"]")).Click();
+                driverFF.FindElement(By.XPath("//*[@id=\"name\"]")).SendKeys("Birthday Outfit Ideas "+i);
+                driverFF.FindElement(By.XPath("//*[@id=\"name\"]")).SendKeys(Keys.Enter);
+                System.Threading.Thread.Sleep(1000);
+            }
+
+            //homepage
+            System.Threading.Thread.Sleep(1000);
+            driverFF.FindElement(By.XPath("//*[@id=\"header_logo\"]/a/img")).Click();
+
+            //adding items to wishlist
+            for (int i = 1; i < 4; i++)
+            {
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"homefeatured\"]/li["+i+"]/div/div[1]/div/a[1]/img")));
+                driverFF.FindElement(By.XPath("//*[@id=\"homefeatured\"]/li["+i+"]/div/div[1]/div/a[1]/img")).Click();
+
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id=\"wishlist_button\"]")));
+                driverFF.FindElement(By.XPath(".//*[@id=\"wishlist_button\"]")).Click();
+
+                System.Threading.Thread.Sleep(1000);
+                driverFF.Navigate().Back();
+            }
+            //navigate to wishlist
+            driverFF.FindElement(By.XPath("//*[@id=\"header\"]/div[2]/div/div/nav/div[1]/a/span")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"center_column\"]/div/div[2]/ul/li/a/span")));
+            driverFF.FindElement(By.XPath("//*[@id=\"center_column\"]/div/div[2]/ul/li/a/span")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//div/div[2]/div/div[3]/div[2]/div/div[1]/table/tbody/tr/td[1]/a")));
+            driverFF.FindElement(By.XPath("//div/div[2]/div/div[3]/div[2]/div/div[1]/table/tbody/tr/td[1]/a")).Click();
+        }
+    }
+}

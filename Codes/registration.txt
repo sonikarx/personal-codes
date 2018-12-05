@@ -1,0 +1,57 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+
+namespace WishlistTesting
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        static IWebDriver driverFF;
+
+
+        [AssemblyInitialize]
+        public static void SetUp(TestContext context)
+        {
+            driverFF = new FirefoxDriver();
+        }
+
+
+        [TestMethod]
+        public void WishListTest()
+        {
+            var wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(3));
+            Random rnd = new Random();
+            long phone = rnd.Next(100000000, 999999999);
+
+            driverFF.Navigate().GoToUrl("http://automationpractice.com");
+
+            for (int i = 0; i <= 10; i++)
+            {
+                driverFF.FindElement(By.XPath("//*[@id=\"header\"]/div[2]/div/div/nav/div[1]/a")).Click();
+
+                driverFF.FindElement(By.XPath("//*[@id=\"email_create\"]")).SendKeys("sonika.wintec"+i+"@wintec.com");
+                driverFF.FindElement(By.XPath("//*[@id=\"SubmitCreate\"]")).Click();
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"phone_mobile\"]")));
+
+                driverFF.FindElement(By.XPath("//*[@id=\"id_gender2\"]")).Click();
+                driverFF.FindElement(By.XPath("//*[@id=\"customer_firstname\"]")).SendKeys("Sonika");
+                driverFF.FindElement(By.XPath("//*[@id=\"customer_lastname\"]")).SendKeys("Test");
+                driverFF.FindElement(By.XPath("//*[@id=\"passwd\"]")).SendKeys("wintec");
+                driverFF.FindElement(By.XPath("//*[@id=\"address1\"]")).SendKeys("Tristram Street");
+                driverFF.FindElement(By.XPath("//*[@id=\"city\"]")).SendKeys("Hamilton");
+                SelectElement state = new SelectElement(driverFF.FindElement(By.XPath("//*[@id=\"id_state\"]")));
+                state.SelectByIndex(rnd.Next(1, 50));
+                driverFF.FindElement(By.XPath("//*[@id=\"postcode\"]")).SendKeys(rnd.Next(10000,99999).ToString());
+                SelectElement country = new SelectElement(driverFF.FindElement(By.XPath("//*[@id=\"id_country\"]")));
+                country.SelectByText("United States");
+                driverFF.FindElement(By.XPath("//*[@id=\"phone_mobile\"]")).SendKeys(rnd.Next(100000000, 999999999).ToString());
+                driverFF.FindElement(By.XPath("//*[@id=\"submitAccount\"]")).Click();
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"header\"]/div[2]/div/div/nav/div[2]/a")));
+                driverFF.FindElement(By.XPath("//*[@id=\"header\"]/div[2]/div/div/nav/div[2]/a")).Click();
+            }
+        }
+    }
+}

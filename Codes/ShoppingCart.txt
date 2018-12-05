@@ -1,0 +1,75 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+
+namespace ShoppingCart_Selenium
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        static IWebDriver driverFF;
+
+
+        [AssemblyInitialize]
+        public static void SetUp(TestContext context)
+        {
+            driverFF = new FirefoxDriver();
+        }
+
+        [TestMethod]
+
+        public void ShoppingCartTest()
+        {
+            var wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(3));
+
+            driverFF.Manage().Window.Maximize();
+            driverFF.Navigate().GoToUrl("http://automationpractice.com");
+
+            //item1 
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"homefeatured\"]/li[1]/div/div[1]/div/a[1]/img")));
+            driverFF.FindElement(By.XPath("//*[@id=\"homefeatured\"]/li[1]/div/div[1]/div/a[1]/img")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(".//*[text()='Add to cart']")));
+            driverFF.FindElement(By.XPath(".//*[text()='Add to cart']")).Click();
+
+
+            //item2 
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"blockcart_caroucel\"]/li[1]/div/a/img")));
+            driverFF.FindElement(By.XPath("//*[@id=\"blockcart_caroucel\"]/li[1]/div/a/img")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(".//*[text()='Add to cart']")));
+            driverFF.FindElement(By.XPath(".//*[text()='Add to cart']")).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(".//a[contains(@title,'Proceed to checkout')]")));
+            driverFF.FindElement(By.XPath(".//a[contains(@title,'Proceed to checkout')]")).Click();
+
+
+            //Summary 
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"center_column\"]/p[2]/a[1]/span")));
+            driverFF.FindElement(By.XPath("//*[@id=\"center_column\"]/p[2]/a[1]/span")).Click();
+
+            //Sign in 
+            driverFF.FindElement(By.XPath("//*[@id=\"email\"]")).SendKeys("sonika.wintec@wintec.com");
+            driverFF.FindElement(By.XPath("//*[@id=\"passwd\"]")).SendKeys("akinos");
+            driverFF.FindElement(By.XPath("//*[@id=\"passwd\"]")).SendKeys(Keys.Enter);
+
+            //Address 
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"center_column\"]/form/p/button/span")));
+            driverFF.FindElement(By.XPath("//*[@id=\"center_column\"]/form/p/button/span")).Click();
+
+            //Shipping 
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"form\"]/p/button/span")));
+            driverFF.FindElement(By.XPath("//*[@id=\"cgv\"]")).Click();
+            driverFF.FindElement(By.XPath("//*[@id=\"form\"]/p/button/span")).Click();
+
+            //Payment
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"HOOK_PAYMENT\"]/div[1]/div/p/a")));
+            driverFF.FindElement(By.XPath("//*[@id=\"HOOK_PAYMENT\"]/div[1]/div/p/a")).Click();
+
+            //confirm order 
+            driverFF.FindElement(By.XPath("//*[@id=\"cart_navigation\"]/button/span")).Click();
+
+            System.Threading.Thread.Sleep(3000);
+            driverFF.Close();
+        }
+    }
+}

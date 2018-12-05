@@ -1,0 +1,84 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+using System.IO;
+
+namespace ListCheck_Selenium
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        static IWebDriver driverFF;
+
+        [AssemblyInitialize]
+        public static void SetUp(TestContext context)
+        {
+            driverFF = new FirefoxDriver();
+        }
+
+        [TestMethod]
+        public void TestMethod1()
+        {
+            //variables
+            var wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(3));
+            IWebElement regionElement;
+            SelectElement region;
+            IWebElement regionElement2;
+            String districts;
+            String districtssecondrun;
+            TextWriter tw1 = new StreamWriter("C:/Temp/districts.txt");
+            TextWriter tw2 = new StreamWriter("C:/Temp/districts2.txt");
+
+            try
+            {
+                driverFF.Navigate().GoToUrl("https://www.trademe.co.nz/flatmates-wanted");
+
+                //first dropdown - regions
+                regionElement = driverFF.FindElement(By.XPath("//*[@id=\"134\"]"));
+                region = new SelectElement(regionElement);
+                
+
+                //second dropdown - districts
+                regionElement2 = driverFF.FindElement(By.XPath("//*[@id=\"135\"]"));
+                districts = regionElement2.Text;
+
+
+                //write all districts for 5 regions
+                for (int i = 1; i <= 5; i++)
+                {
+                    region.SelectByIndex(i);
+                    tw1.WriteLine(regionElement2.Text);
+                    tw1.WriteLine(" ");
+                }
+                driverFF.Close();
+
+
+                //SECOND RUN TO COMPARE VALUES of first and second districts
+                driverFF = new FirefoxDriver();
+                driverFF.Navigate().GoToUrl("https://www.trademe.co.nz/flatmates-wanted");
+
+                regionElement = driverFF.FindElement(By.XPath("//*[@id=\"134\"]"));
+                region = new SelectElement(regionElement);
+                regionElement2 = driverFF.FindElement(By.XPath("//*[@id=\"135\"]"));
+                districtssecondrun = regionElement2.Text;
+                for (int j = 1; j < 5; j++)
+                {
+                    region.SelectByIndex(j);
+                    tw2.WriteLine(regionElement2.Text);
+                    tw2.WriteLine(" ");
+                }
+
+                Assert.AreEqual(districtssecondrun, districts);
+            }
+            finally
+            {
+                tw1.Close();
+                tw2.Close();
+                driverFF.Close();
+            }
+
+        }
+    }
+}

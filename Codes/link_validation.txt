@@ -1,0 +1,36 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+
+namespace LinkValidationTest_Selenium
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        static IWebDriver driverFF;
+
+
+        [AssemblyInitialize]
+        public static void SetUp(TestContext context)
+        {
+            driverFF = new FirefoxDriver();
+        }
+
+        [TestMethod]
+        public void TestMethod1()
+        {
+            var wait = new WebDriverWait(driverFF, TimeSpan.FromSeconds(3));
+            driverFF.Navigate().GoToUrl("https://www.trademe.co.nz");
+            driverFF.FindElement(By.XPath("//*[@id=\"main-box-categories\"]/div/div[1]/ul/li[1]/a")).Click();
+            for (int i = 1; i < 10; i++)
+            {
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"CategoryNavigator_CategoryPlaceholder\"]/table/tbody/tr/td[1]/ul/li[" + i + "]/a")));
+                driverFF.FindElement(By.XPath("//*[@id=\"CategoryNavigator_CategoryPlaceholder\"]/table/tbody/tr/td[1]/ul/li["+i+"]/a")).Click();
+                System.Threading.Thread.Sleep(2500);
+                driverFF.Navigate().Back();
+            }
+        }
+    }
+}
